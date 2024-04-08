@@ -18,6 +18,18 @@
 #include QMK_KEYBOARD_H
 
 // Tap Dance declarations
+enum {
+    TD_NAV,
+};
+
+// Tap Dance definitions
+tap_dance_action_t tap_dance_actions[] = {
+    // Tap once for Escape, twice for Caps Lock
+    [TD_NAV] = ACTION_TAP_DANCE_DOUBLE(KC_BTN4, KC_BTN5),
+};
+
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [0] = LAYOUT( KC_BTN4, KC_BTN5, DRAG_SCROLL, KC_BTN2, KC_BTN1, KC_BTN3 )
+    [0] = LAYOUT( KC_BTN3, TD(TD_NAV), 
+    PRECISION, DRAG_SCROLL, KC_BTN1, KC_BTN2 )
 };
