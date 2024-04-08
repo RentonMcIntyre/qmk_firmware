@@ -20,9 +20,9 @@
 
 #ifndef PLOOPY_DPI_OPTIONS
 #    define PLOOPY_DPI_OPTIONS \
-        { 600, 900, 1200, 1600 }
+        { 600, 1600 }
 #    ifndef PLOOPY_DPI_DEFAULT
-#        define PLOOPY_DPI_DEFAULT 1
+#        define PLOOPY_DPI_DEFAULT 0
 #    endif
 #endif
 #ifndef PLOOPY_DPI_DEFAULT
@@ -38,13 +38,22 @@
 #    define PLOOPY_DRAGSCROLL_MULTIPLIER 0.75  // Variable-DPI Drag Scroll
 #endif
 #ifndef PLOOPY_DRAGSCROLL_SEMAPHORE
-#    define PLOOPY_DRAGSCROLL_SEMAPHORE 4
-#endif
-#ifndef PLOOPY_DRAGSCROLL_MOMENTARY
-#    define PLOOPY_DRAGSCROLL_MOMENTARY 1
+#    define PLOOPY_DRAGSCROLL_SEMAPHORE 12
 #endif
 #ifndef PLOOPY_DRAGSCROLL_INVERT
 #    define PLOOPY_DRAGSCROLL_INVERT 1
+#endif
+#ifndef PLOOPY_PRECISION
+#    define PLOOPY_PRECISION 1
+#endif
+#ifndef PLOOPY_PRECISION_DPI
+#    define PLOOPY_PRECISION_DPI 1200  // Fixed-DPI Precision Mode
+#endif
+#ifndef PLOOPY_PRECISION_FIXED
+#    define PLOOPY_PRECISION_FIXED 1
+#endif
+#ifndef PLOOPY_PRECISION_MULTIPLIER
+#    define PLOOPY_PRECISION_MULTIPLIER 0.25  // Variable-DPI Precision Mode
 #endif
 
 keyboard_config_t keyboard_config;
@@ -58,6 +67,7 @@ uint16_t          dpi_array[] = PLOOPY_DPI_OPTIONS;
 
 // Trackball State
 bool     is_drag_scroll    = false;
+bool     is_precision      = false;
 
 // drag scroll divisor state
 int8_t drag_scroll_x_semaphore = 0;
@@ -116,6 +126,13 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
         keyboard_config.dpi_config = (keyboard_config.dpi_config + 1) % DPI_OPTION_SIZE;
         eeconfig_update_kb(keyboard_config.raw);
         pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
+    }
+
+
+    if (keycode == PRECISION) {
+        if (record->event.pressed)
+            is_precision ^= 1;
+        pointing_device_set_cpi(is_precision ? 200 : 600);
     }
 
     if (keycode == DRAG_SCROLL) {
